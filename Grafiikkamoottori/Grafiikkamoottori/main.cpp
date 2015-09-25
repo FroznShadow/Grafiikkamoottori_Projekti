@@ -7,8 +7,8 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 int main(int argc, char* argv[])
 {
-	if(Init() != 0)
-		return -1;
+	if (Init() != 0)
+		return error_code;
 
 	glfwSetKeyCallback(window, key_callback);
 	while (!glfwWindowShouldClose(window))

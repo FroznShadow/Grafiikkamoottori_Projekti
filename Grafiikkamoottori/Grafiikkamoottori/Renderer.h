@@ -2,18 +2,21 @@
 #include "GLFW\glfw3.h"
 #include <stdio.h>
 #include <stdlib.h>
-
-namespace
-{
+//namespace engine
+//{
 	GLFWwindow* window;
+	GLenum err;
+	int error_code;
+	void Render();
+	int Init(void);
 
-}
+//}
 
 int Init(void)
 {
 	if (!glfwInit())
 	{
-		fprintf(stderr, "nope.avi");
+		error_code = 101;
 		return -1;
 	}
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
@@ -22,6 +25,7 @@ int Init(void)
 	window = glfwCreateWindow(640, 480, "Graphics Engine", NULL, NULL);
 	if (window == NULL)
 	{
+		error_code = 102;
 		glfwTerminate();
 		return -1;
 	}
@@ -29,6 +33,7 @@ int Init(void)
 	glewExperimental = true;
 	if (glewInit() != GLEW_OK)
 	{
+		error_code = 103;
 		return -1;
 	}
 	glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
