@@ -1,4 +1,5 @@
 #include "GL\glew.h"
+#include "glm\common.hpp"
 #include "GLFW\glfw3.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,6 +7,22 @@
 //{
 	GLFWwindow* window;
 	GLenum err;
+
+	GLuint programID;
+	GLuint MVP_MatrixID;
+	GLuint vertexbuffer;
+	GLuint VertexArrayID;
+	GLuint colorbuffer;
+	GLuint TextureID;
+	GLuint Texture;
+	GLuint uvbuffer;
+	GLuint indexbuffer;
+
+	float alpha = 0.0f;
+
+	glm::mat4 MVP();
+
+	int N_triangles;
 	int error_code;
 	void Render();
 	int Init(void);
@@ -37,6 +54,64 @@ int Init(void)
 		return -1;
 	}
 	glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
+
+	glEnable(GL_DEPTH_TEST);
+	glGenVertexArrays(1, &VertexArrayID);
+	glBindVertexArray(VertexArrayID);
+
+	programID = LoadShaders(
+		"VertexShader.vertexshader",
+		"ColorFragmentShader.fragmentshader");
+
+	MVP_MatrixID = glGetUniformLocation(programID, "MVP");
+
+	// Vertex
+	static const GLfloat g_vertex_buffer_data[] =
+	{
+		-0.5f, -0.5f,  0.0f, 
+		 0.5f,  0.0f,  0.0f, 
+		 0.0f,  0.5f,  0.0f,
+	};
+	glGenBuffers(1, &vertexbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+	// Color
+	static const GLfloat g_color_buffer_data[] =
+	{
+		1.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 1.0f,
+	};
+	N_triangles = 1;
+	glGenBuffers(1, &colorbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
+
+	// Index
+	static const GLubyte g_indices[] =
+	{
+		0, 1, 2,
+	};
+	glGenBuffers(1, &indexbuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_indices), g_indices, GL_STATIC_DRAW);
+
+	// UV
+	static const GLfloat g_uv_buffer_data[] =
+	{
+		0.0, 0.0,
+		1.0, 0.0,
+		1.0, 1.0,
+	};
+	glGenBuffers(1, &uvbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
+
+	// loading texture
+	TextureID = glGetUniformLocation(programID, "myTextureSampler");
+	Texture = loadBMP_custom("./uvtemplate.bmp");
+
 	return 0;
 
 }
@@ -45,5 +120,13 @@ void Render()
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glfwSwapBuffers(window);
+}
+void Uninit(void)
+{
+	glDeleteBuffers(1, &vertexbuffer);
+	glDeleteBuffers(1, &colorbuffer);
+	glDeleteBuffers(1, &uvbuffer);
+	glDeleteVertexArrays(1, &VertexArrayID);
+	glDeleteProgram(programID);
 }
 
