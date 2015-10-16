@@ -23,5 +23,25 @@
     <ClInclude Include="Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Triangle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="VertexShader.vertexshader">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="GeometryShader.geometryshader">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="FragmentShader.fragmentshader">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

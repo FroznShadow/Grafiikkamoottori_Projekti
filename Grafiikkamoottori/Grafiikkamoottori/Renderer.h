@@ -3,6 +3,11 @@
 #include "GLFW\glfw3.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "Shader.h"
+#include "Texture.h"
+#include "Triangle.h"
+
 //namespace engine
 //{
 	GLFWwindow* window;
@@ -26,8 +31,9 @@
 	int error_code;
 	void Render();
 	int Init(void);
-
+	int num;
 //}
+
 
 int Init(void)
 {
@@ -54,17 +60,18 @@ int Init(void)
 		return -1;
 	}
 	glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
-
+	
 	glEnable(GL_DEPTH_TEST);
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
-
+	
 	programID = LoadShaders(
 		"VertexShader.vertexshader",
-		"ColorFragmentShader.fragmentshader");
-
+		"FragmentShader.fragmentshader",
+		"GeometryShader.geometryshader");
+		
 	MVP_MatrixID = glGetUniformLocation(programID, "MVP");
-
+	
 	// Vertex
 	static const GLfloat g_vertex_buffer_data[] =
 	{
@@ -111,7 +118,7 @@ int Init(void)
 	// loading texture
 	TextureID = glGetUniformLocation(programID, "myTextureSampler");
 	Texture = loadBMP_custom("./uvtemplate.bmp");
-
+	
 	return 0;
 
 }
@@ -119,6 +126,15 @@ void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	Triforce(num);
+	/*glBegin(GL_TRIANGLES);
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, 0.5f, 0.0f);
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(-0.5f, -0.5f, 0.0f);
+	glColor3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(0.5f, -0.5f, 0.0f);
+	glEnd(); */
 	glfwSwapBuffers(window);
 }
 void Uninit(void)
