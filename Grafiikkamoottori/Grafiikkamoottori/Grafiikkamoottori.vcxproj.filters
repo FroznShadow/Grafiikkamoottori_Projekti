@@ -37,10 +37,10 @@
     <None Include="VertexShader.vertexshader">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="GeometryShader.geometryshader">
+    <None Include="FragmentShader.fragmentshader">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="FragmentShader.fragmentshader">
+    <None Include="GeometryShader.geometryshader">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

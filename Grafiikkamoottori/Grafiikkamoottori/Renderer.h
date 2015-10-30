@@ -3,10 +3,13 @@
 #include "GLFW\glfw3.h"
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "math.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "Triangle.h"
+#include "glm\gtc\matrix_transform.hpp"
+#include "glm\gtx\transform.hpp"
+#include "glm\glm.hpp"
 
 //namespace engine
 //{
@@ -22,6 +25,7 @@
 	GLuint Texture;
 	GLuint uvbuffer;
 	GLuint indexbuffer;
+
 
 	float alpha = 0.0f;
 
@@ -61,7 +65,7 @@ int Init(void)
 	}
 	glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
 	
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 	
@@ -127,14 +131,14 @@ void Render()
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	Triforce(num);
-	/*glBegin(GL_TRIANGLES);
-	glColor3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(0.0f, 0.5f, 0.0f);
-	glColor3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(-0.5f, -0.5f, 0.0f);
-	glColor3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(0.5f, -0.5f, 0.0f);
-	glEnd(); */
+	//glBegin(GL_TRIANGLES);
+	//glColor3f(1.0f, 0.0f, 0.0f);
+	//glVertex3f(0.0f, 0.5f, 0.0f);
+	//glColor3f(0.0f, 1.0f, 0.0f);
+	//glVertex3f(-0.5f, -0.5f, 0.0f);
+	//glColor3f(0.0f, 0.0f, 1.0f);
+	//glVertex3f(0.5f, -0.5f, 0.0f);
+	//glEnd(); 
 	glfwSwapBuffers(window);
 }
 void Uninit(void)

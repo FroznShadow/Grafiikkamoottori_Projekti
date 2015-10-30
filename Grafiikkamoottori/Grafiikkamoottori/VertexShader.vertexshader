@@ -1,9 +1,12 @@
-#version 330 core
+#version 120 
 
-layout(location = 0) in vec3 vertexPosition_modelspace;
-layout(location = 1) in vec3 vertexColor;
+#define VERTEX_POSITION 0
+#define VERTEX_COLOR 1
 
-out vec3 fragmentColor;
+in vec3 vertexPosition_modelspace;
+in vec3 vertexColor;
+varying out vec3 fragmentColor;
+
 void main( )
 {
 	gl_Position.xyz = vertexPosition_modelspace;

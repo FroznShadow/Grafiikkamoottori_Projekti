@@ -1,8 +1,9 @@
-#version 330 core
+
+#version 120 
 
 in vec3 fragmentColor;
 
-out vec3 color;
+varying out vec3 color;
 
 void main()
 {
