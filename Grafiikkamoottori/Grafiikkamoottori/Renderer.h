@@ -1,5 +1,7 @@
 #include "GL\glew.h"
-#include "glm\common.hpp"
+#include "glm\glm.hpp"
+#include "glm\gtc\matrix_transform.hpp"
+#include "glm\gtx\transform.hpp"
 #include "GLFW\glfw3.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,7 +13,7 @@
 #include "glm\gtx\transform.hpp"
 #include "glm\glm.hpp"
 
-//namespace engine
+//namespace
 //{
 	GLFWwindow* window;
 	GLenum err;
@@ -21,6 +23,10 @@
 	GLuint vertexbuffer;
 	GLuint VertexArrayID;
 	GLuint colorbuffer;
+
+	GLuint textureVertexbuffer;
+	GLuint textureVertexArrayID;
+	GLuint textureProgramID;
 	GLuint TextureID;
 	GLuint Texture;
 	GLuint uvbuffer;
@@ -30,7 +36,7 @@
 	float alpha = 0.0f;
 
 	glm::mat4 MVP();
-
+	glm::vec2 wh;
 	int N_triangles;
 	int error_code;
 	void Render();
@@ -66,6 +72,7 @@ int Init(void)
 	glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
 	
 	glEnable(GL_TEXTURE_2D);
+
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 	
