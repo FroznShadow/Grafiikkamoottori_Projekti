@@ -42,6 +42,8 @@
 	void Render();
 	int Init(void);
 	int num;
+	int w;
+	int h;
 //}
 
 
@@ -128,7 +130,7 @@ int Init(void)
 
 	// loading texture
 	TextureID = glGetUniformLocation(programID, "myTextureSampler");
-	Texture = loadBMP_custom("./uvtemplate.bmp");
+	Texture = loadBMP_custom(w,h,"./uvtemplate.bmp");
 	
 	return 0;
 
