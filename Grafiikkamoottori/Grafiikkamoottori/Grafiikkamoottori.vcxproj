@@ -95,6 +95,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Triangle.h" />
+    <ClInclude Include="vertexshader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FragmentShader.fragmentshader" />
