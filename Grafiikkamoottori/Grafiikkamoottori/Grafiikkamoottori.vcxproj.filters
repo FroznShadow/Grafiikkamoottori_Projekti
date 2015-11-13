@@ -46,5 +46,11 @@
     <None Include="GeometryShader.geometryshader">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Texture.FragmentShader">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Texture.VertexShader">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

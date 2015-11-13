@@ -1,0 +1,16 @@
+#version 120
+
+#define VERTEX_POSITION 0
+#DEFINE TEXTURE_DATA 1
+
+in vec3 vertexPosition_modelspace;
+in vec2 vertexUV;
+
+varying out vec2 UV
+
+
+void main/(
+{
+gl_Position = vec4(vertexPosition_modelspace,1);
+UV = vertexUV;
+}
