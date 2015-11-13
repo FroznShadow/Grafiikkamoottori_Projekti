@@ -18,7 +18,7 @@ GLuint Wrap_T;
 GLuint Filter_Min;
 GLuint Filter_Max;
 
-GLuint loadBMP_custom(GLuint width, GLuint height, const char * imagepath)
+GLuint loadBMP_custom(const char * imagepath, GLuint width = 0, GLuint height = 0)
 {
 	glGenTextures(1 ,&textureID);
 

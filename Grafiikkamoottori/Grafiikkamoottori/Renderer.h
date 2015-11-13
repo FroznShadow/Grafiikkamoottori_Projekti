@@ -68,7 +68,7 @@
 		glGenVertexArrays(1, &textureVertexArrayID);
 		glBindVertexArray(textureVertexArrayID);
 
-		textureProgramID = LoadShaders("Texture.VertexShader", "Texture.FragmentShader","Texture.GeometryShader");
+		textureProgramID = LoadShaders("Texture.VertexShader", "Texture.FragmentShader");
 		static const GLfloat texture_vertex_buffer_data[] =
 		{
 			-1.0, -1.0, 0.9,
@@ -99,7 +99,7 @@
 		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
 		TextureID = glGetUniformLocation(textureProgramID, "myTextureSampler");
-		Texture = loadBMP_custom(Width,Height,"./uvtemplate.bmp");
+		Texture = loadBMP_custom("./uvtemplate.bmp");
 		return 0;
 	}
 int Init(void)
@@ -127,6 +127,7 @@ int Init(void)
 		return -1;
 	}
 	InitCamera();
+	InitBackground();
 	glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
 	
 	glEnable(GL_TEXTURE_2D);
@@ -210,7 +211,9 @@ void DrawBackground()
 	glBindBuffer(GL_ARRAY_BUFFER, textureVertexbuffer);
 	glVertexAttribPointer(
 		VERTEX_POSITION,
-		3, GL_FLOAT, GL_FALSE,
+		3, 
+		GL_FLOAT, 
+		GL_FALSE,
 		0,
 		(void*)0
 		);
@@ -229,7 +232,7 @@ void DrawBackground()
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 }
-void DrawBox()
+/*void DrawBox()
 {
 	glEnable(GL_BLEND);
 	glm::vec3 x_axis(1.0, 0.0, 0.0);
@@ -277,7 +280,7 @@ void DrawBox()
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 
-}
+}*/
 void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -286,7 +289,7 @@ void Render()
 	glPopMatrix();
 	glPushMatrix();
 	DrawBackground();
-	DrawBox();
+	//DrawBox();
 
 	Triforce(num);
 	//glBegin(GL_TRIANGLES);
