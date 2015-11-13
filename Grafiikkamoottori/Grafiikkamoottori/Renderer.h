@@ -13,8 +13,18 @@
 #include "glm\gtx\transform.hpp"
 #include "glm\glm.hpp"
 #include "vertexshader.h"
-//namespace
-//{
+namespace Renderer
+{
+	void Render();
+	int Init(void);
+	int InitCamera(void);
+	int initBackground(void);
+	int InitBox(void);
+	void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
+
+}
+namespace
+{
 	GLFWwindow* window;
 	GLenum err;
 
@@ -35,7 +45,7 @@
 	GLuint indexbuffer;
 
 
-	float alpha = 0.0f;
+	float alpha = 1.0f;
 
 	GLfloat cameraX = 0.0f, cameraY = 0.0f;
 	glm::mat4 MVP(1.0);
@@ -43,15 +53,16 @@
 	int N_triangles;
 	int N_vertex;
 	int error_code;
-	void Render();
-	int Init(void);
-	int InitCamera(void);
-	int initBackground(void);
+
 	int num;
 	int w;
 	int h;
-//}
-
+}
+	void Renderer::FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
+		glViewport(0, 0, width, height);
+		wh = glm::vec2(width, height);
+		//std::cout<<width<<"x"<<height<<" "<<w<<"x"<<h<<"\n";
+	}
 	int InitCamera(void)
 	{
 		glMatrixMode(GL_PROJECTION);
@@ -74,7 +85,7 @@
 			-1.0, -1.0, 0.9,
 			1.0, -1.0, 0.9,
 			-1.0, 1.0, 0.9,
-			1.0, 1.0, 0.9
+			1.0, 1.0, 0.9,
 		};
 		glGenBuffers(1, &textureVertexbuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, textureVertexbuffer);
@@ -102,6 +113,69 @@
 		Texture = loadBMP_custom("./uvtemplate.bmp");
 		return 0;
 	}
+	int InitBox(void)
+	{
+		glGenVertexArrays(1, &VertexArrayID);
+		glBindVertexArray(VertexArrayID);
+
+		programID = LoadShaders("VertexShader.vertexshader", "FragmentShader.fragmentshader");
+		MVP_MatrixID = glGetUniformLocation(programID, "MVP");
+		wh_VectorID = glGetUniformLocation(programID, "wh");
+
+#define SQRT05 0.707
+		static GLfloat g_vertex_buffer_data[] = {
+
+			0.0f, 0.0f, 0.0f, //0
+			1.0f, 0.0f, 0.0f, //1
+			SQRT05, SQRT05, 0.0f, //2
+			0.0f, 1.0f, 0.0f,//3
+			-SQRT05, SQRT05, 0.0f,//4
+			-1.0f, 0.0f, 0.0f, //5
+			-SQRT05, -SQRT05, 0.0f,//6
+			0.0f, -1.0f, 0.0f, //7
+			SQRT05, -SQRT05, 0.0f, //8
+		};
+		static GLuint g_indices[] = {
+			0, 1, 2, //1
+			0, 2, 3, //2
+			0, 3, 4, //3
+			0, 4, 5, //4
+			0, 5, 6, //5
+			0, 6, 7, //6
+			0, 7, 8, //7
+			0, 8, 1, //8
+		};
+
+
+		glGenBuffers(1, &vertexbuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+
+		static const GLfloat g_color_buffer_data[] = {
+			1.0f, 0.0f, 0.0f, 1.0f, //0
+			0.0f, 1.0f, 0.0f, 0.5f, //1
+			0.0f, 0.0f, 1.0f, 0.5f, //2
+			0.1f, 1.0f, 1.0f, 1.0f, //3
+			1.0f, 0.0f, 0.0f, 1.0f, //4
+			0.0f, 1.0f, 0.0f, 0.5f, //5
+			0.0f, 0.0f, 1.0f, 0.5f, //6
+			0.1f, 1.0f, 1.0f, 1.0f, //7
+			0.1f, 1.0f, 1.0f, 1.0f, //8
+		};
+
+		glGenBuffers(1, &colorbuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
+
+		glGenBuffers(1, &indexbuffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_indices), g_indices, GL_STATIC_DRAW);
+
+		N_vertex = sizeof(g_indices) / sizeof(*g_indices);
+	
+		return 0;
+	}
 int Init(void)
 {
 	if (!glfwInit())
@@ -112,7 +186,9 @@ int Init(void)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
-	window = glfwCreateWindow(640, 480, "Graphics Engine", NULL, NULL);
+	int w = 640;
+	int h = 480;
+	window = glfwCreateWindow(w, h, "Graphics Engine", NULL, NULL);
 	if (window == NULL)
 	{
 		error_code = 102;
@@ -120,6 +196,7 @@ int Init(void)
 		return -1;
 	}
 	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, Renderer::FramebufferSizeCallback);
 	glewExperimental = true;
 	if (glewInit() != GLEW_OK)
 	{
@@ -130,64 +207,16 @@ int Init(void)
 	InitBackground();
 	glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
 	
-	glEnable(GL_TEXTURE_2D);
-
-	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
+	//glEnable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	InitBox();
 	
-	programID = LoadShaders(
-		"VertexShader.vertexshader",
-		"FragmentShader.fragmentshader",
-		"GeometryShader.geometryshader");
-		
-	MVP_MatrixID = glGetUniformLocation(programID, "MVP");
-	wh_VectorID = glGetUniformLocation(programID, "wh");
-	// Vertex
-	static const GLfloat g_vertex_buffer_data[] =
-	{
-		-0.5f, -0.5f,  0.0f, 
-		 0.5f,  0.0f,  0.0f, 
-		 0.0f,  0.5f,  0.0f,
-	};
-	glGenBuffers(1, &vertexbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-
-	// Color
-	static const GLfloat g_color_buffer_data[] =
-	{
-		1.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 1.0f,
-	};
-	N_triangles = 1;
-	glGenBuffers(1, &colorbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
-
-	// Index
-	static const GLubyte g_indices[] =
-	{
-		0, 1, 2,
-	};
-	glGenBuffers(1, &indexbuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_indices), g_indices, GL_STATIC_DRAW);
-	N_vertex = sizeof(g_indices) / sizeof(*g_indices);
-	// UV
-	static const GLfloat g_uv_buffer_data[] =
-	{
-		0.0, 0.0,
-		1.0, 0.0,
-		1.0, 1.0,
-	};
-	glGenBuffers(1, &uvbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
 
 	// loading texture
 	//TextureID = glGetUniformLocation(programID, "myTextureSampler");
-	//Texture = loadBMP_custom(w,h,"./uvtemplate.bmp");
+	//Texture = loadBMP_custom("./uvtemplate.bmp");
 	
 	//glDrawElements(
 	//	GL_TRIANGLES,
@@ -232,7 +261,7 @@ void DrawBackground()
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 }
-/*void DrawBox()
+void DrawBox()
 {
 	glEnable(GL_BLEND);
 	glm::vec3 x_axis(1.0, 0.0, 0.0);
@@ -280,18 +309,19 @@ void DrawBackground()
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 
-}*/
+}
 void Render()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-	glPushMatrix();
-	DrawBackground();
+	//glMatrixMode(GL_MODELVIEW);
+	//glPopMatrix();
+	//glPushMatrix();
 	//DrawBox();
+	DrawBackground();
 
 	Triforce(num);
+	DrawBox();
 	//glBegin(GL_TRIANGLES);
 	//glColor3f(1.0f, 0.0f, 0.0f);
 	//glVertex3f(0.0f, 0.5f, 0.0f);
