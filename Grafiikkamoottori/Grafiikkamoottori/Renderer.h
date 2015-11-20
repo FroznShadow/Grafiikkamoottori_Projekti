@@ -93,7 +93,8 @@ namespace
 			sizeof(texture_vertex_buffer_data), texture_vertex_buffer_data, GL_STATIC_DRAW);
 		static const GLubyte texture_indices[] =
 		{
-			0, 1, 2, 1, 3, 2,
+			0, 1, 2, 
+			1, 3, 2,
 		};
 		glGenBuffers(1, &textureIndexbuffer);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, textureIndexbuffer);
@@ -113,6 +114,7 @@ namespace
 		Texture = loadBMP_custom("./uvtemplate.bmp");
 		return 0;
 	}
+
 	int InitBox(void)
 	{
 		glGenVertexArrays(1, &VertexArrayID);
@@ -205,6 +207,7 @@ int Init(void)
 	}
 	InitCamera();
 	InitBackground();
+
 	glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
 	
 	//glEnable(GL_DEPTH_TEST);
@@ -278,7 +281,7 @@ void DrawBox()
 	glfwGetFramebufferSize(window, &width, &height);
 	glm::mat4 V = glm::ortho(-1.0f, 1.0f, -1.0f*height / width, 1.0f*height / width);
 	glm::mat4 VP = V*P;
-	glm::mat4 M = glm::rotate(alpha, z_axis)*glm::translate(glm::vec3(0.0, 0.5, 0))*glm::scale(glm::vec3(1.5));
+	glm::mat4 M = glm::rotate(alpha, z_axis)*glm::translate(glm::vec3(0.0, 0.5, 0))*glm::scale(glm::vec3(0.25));
 	MVP = VP*M;
 	glUniformMatrix4fv(MVP_MatrixID, 1,GL_FALSE, &MVP[0][0]);
 	glUniform2fv(wh_VectorID, 1, &wh[0]);
@@ -318,8 +321,7 @@ void Render()
 	//glPopMatrix();
 	//glPushMatrix();
 	//DrawBox();
-	DrawBackground();
-
+	//DrawBackground();
 	Triforce(num);
 	DrawBox();
 	//glBegin(GL_TRIANGLES);
@@ -336,8 +338,11 @@ void Uninit(void)
 {
 	glDeleteBuffers(1, &vertexbuffer);
 	glDeleteBuffers(1, &colorbuffer);
-	glDeleteBuffers(1, &uvbuffer);
+	glDeleteBuffers(1, &textureVertexbuffer);
+	glDeleteBuffers(1, &textureIndexbuffer);
+	//glDeleteBuffers(1, &uvbuffer);
 	glDeleteVertexArrays(1, &VertexArrayID);
 	glDeleteProgram(programID);
+	glDeleteProgram(textureProgramID);
 }
 
