@@ -11,6 +11,7 @@
 #include "Triangle.h"
 #include "Circle.h"
 #include "Matikka.h"
+#include "RandomPolygon.h"
 #include "vertexshader.h"
 namespace Renderer
 {
@@ -43,7 +44,7 @@ namespace
 	GLuint uvbuffer;
 	GLuint indexbuffer;
 
-	float alpha = 1.0f;
+	//float alpha = 1.0f;
 
 	GLfloat cameraX = 1.0f, cameraY = 1.0f;
 	glm::vec3 x_axis(1.0, 0.0, 0.0);
@@ -116,7 +117,7 @@ namespace
 		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
 		TextureID = glGetUniformLocation(textureProgramID, "myTextureSampler");
-		Texture = loadBMP_custom("./uvtemplate.bmp");
+		Texture = loadBMP_custom("uvtemplate.bmp");
 		return 0;
 	}
 
@@ -220,7 +221,7 @@ int Init(void)
 
 	
 	TextureID = glGetUniformLocation(programID, "myTextureSampler");
-	Texture = loadBMP_custom("./textureTest.bmp");
+	Texture = loadBMP_custom("textureTest.bmp");
 	//Texture = loadImage_custom("./Player.bmp");
 	//Texture = loadImage_custom("./Player.png");
 
@@ -267,7 +268,7 @@ void DrawBox()
 	glEnable(GL_BLEND);
 
 
-	RotateMath();
+	RotateMath(-alpha);
 	glUseProgram(programID);
 	
 
@@ -297,19 +298,27 @@ void DrawBox()
 		);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
 	glDrawElements(GL_TRIANGLES, N_vertex, GL_UNSIGNED_BYTE, (GLvoid*)0);
-	alpha += 0.005;
+	alpha += 0.015;
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+
+}
+void DrawnPolygons()
+{
+	RotateMath(alpha);
+	glUniformMatrix4fv(MVP_MatrixID, 1, GL_FALSE, &MVP[0][0]);
+	RandomPolygon(5);
 
 }
 void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-	Triforce(num);
+	DrawBackground();
 	DrawBox();
+	Triforce(num);
 	DrawCircle();
+	DrawnPolygons();
 
 	glfwSwapBuffers(window);
 }
