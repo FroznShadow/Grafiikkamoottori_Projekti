@@ -9,9 +9,8 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Triangle.h"
-#include "glm\gtc\matrix_transform.hpp"
-#include "glm\gtx\transform.hpp"
-#include "glm\glm.hpp"
+#include "Circle.h"
+#include "Matikka.h"
 #include "vertexshader.h"
 namespace Renderer
 {
@@ -25,7 +24,7 @@ namespace Renderer
 }
 namespace
 {
-	GLFWwindow* window;
+	//GLFWwindow* window;
 	GLenum err;
 
 	GLuint programID;
@@ -45,10 +44,10 @@ namespace
 	GLuint indexbuffer;
 
 
-	float alpha = 1.0f;
+	//float alpha = 1.0f;
 
 	GLfloat cameraX = 0.0f, cameraY = 0.0f;
-	glm::mat4 MVP(1.0);
+	//glm::mat4 MVP(1.0);
 	glm::vec2 wh;
 	int N_triangles;
 	int N_vertex;
@@ -217,16 +216,6 @@ int Init(void)
 	InitBox();
 	
 
-	// loading texture
-	//TextureID = glGetUniformLocation(programID, "myTextureSampler");
-	//Texture = loadBMP_custom("./uvtemplate.bmp");
-	
-	//glDrawElements(
-	//	GL_TRIANGLES,
-	//	sizeof(g_indices),
-	//	GL_UNSIGNED_INT,
-	//	(void*)0
-	//	);
 
 	return 0;
 
@@ -267,22 +256,11 @@ void DrawBackground()
 void DrawBox()
 {
 	glEnable(GL_BLEND);
-	glm::vec3 x_axis(1.0, 0.0, 0.0);
-	glm::vec3 y_axis(0.0, 1.0, 0.0);
-	glm::vec3 z_axis(0.0, 0.0, 1.0);
-	glm::vec3 cam_pos(0, 0, 0);
-	glm::vec3 cam_up = y_axis;
-	glm::vec3 cam_right = x_axis;
-	glm::vec3 cam_front = -z_axis;
-	glm::mat4 P = glm::lookAt(cam_pos, cam_pos + cam_front, cam_up);
 
+	RotateMath();
 	glUseProgram(programID);
-	int width, height;
-	glfwGetFramebufferSize(window, &width, &height);
-	glm::mat4 V = glm::ortho(-1.0f, 1.0f, -1.0f*height / width, 1.0f*height / width);
-	glm::mat4 VP = V*P;
-	glm::mat4 M = glm::rotate(alpha, z_axis)*glm::translate(glm::vec3(0.0, 0.5, 0))*glm::scale(glm::vec3(0.25));
-	MVP = VP*M;
+	
+
 	glUniformMatrix4fv(MVP_MatrixID, 1,GL_FALSE, &MVP[0][0]);
 	glUniform2fv(wh_VectorID, 1, &wh[0]);
 
@@ -317,21 +295,13 @@ void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//glMatrixMode(GL_MODELVIEW);
-	//glPopMatrix();
-	//glPushMatrix();
+	
 	//DrawBox();
 	//DrawBackground();
 	Triforce(num);
 	DrawBox();
-	//glBegin(GL_TRIANGLES);
-	//glColor3f(1.0f, 0.0f, 0.0f);
-	//glVertex3f(0.0f, 0.5f, 0.0f);
-	//glColor3f(0.0f, 1.0f, 0.0f);
-	//glVertex3f(-0.5f, -0.5f, 0.0f);
-	//glColor3f(0.0f, 0.0f, 1.0f);
-	//glVertex3f(0.5f, -0.5f, 0.0f);
-	//glEnd(); 
+	DrawCircle();
+	
 	glfwSwapBuffers(window);
 }
 void Uninit(void)
@@ -340,7 +310,7 @@ void Uninit(void)
 	glDeleteBuffers(1, &colorbuffer);
 	glDeleteBuffers(1, &textureVertexbuffer);
 	glDeleteBuffers(1, &textureIndexbuffer);
-	//glDeleteBuffers(1, &uvbuffer);
+	
 	glDeleteVertexArrays(1, &VertexArrayID);
 	glDeleteProgram(programID);
 	glDeleteProgram(textureProgramID);
