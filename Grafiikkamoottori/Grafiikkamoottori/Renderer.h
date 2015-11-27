@@ -268,7 +268,7 @@ void DrawBox()
 	glEnable(GL_BLEND);
 
 
-	RotateMath(-alpha);
+	RotateMath(-alpha,0.1,0.25);
 	glUseProgram(programID);
 	
 
@@ -303,13 +303,22 @@ void DrawBox()
 	glDisableVertexAttribArray(1);
 
 }
-void DrawnPolygons()
+void DrawPolygons1()
 {
-	RotateMath(alpha);
+	RotateMath(alpha,0.25,0.75);
+	
 	glUniformMatrix4fv(MVP_MatrixID, 1, GL_FALSE, &MVP[0][0]);
 	RandomPolygon(5);
 
 }
+void DrawPolygons2()
+{
+	RotateMath(-alpha, 0.25,0.5);
+	glUniformMatrix4fv(MVP_MatrixID, 1, GL_FALSE, &MVP[0][0]);
+	RandomPolygon(6);
+
+}
+
 void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -318,8 +327,8 @@ void Render()
 	DrawBox();
 	Triforce(num);
 	DrawCircle();
-	DrawnPolygons();
-
+	DrawPolygons1();
+	DrawPolygons2();
 	glfwSwapBuffers(window);
 }
 void Uninit(void)
