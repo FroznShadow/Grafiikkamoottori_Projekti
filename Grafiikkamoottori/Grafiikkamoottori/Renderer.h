@@ -43,11 +43,18 @@ namespace
 	GLuint uvbuffer;
 	GLuint indexbuffer;
 
+	float alpha = 1.0f;
 
-	//float alpha = 1.0f;
+	GLfloat cameraX = 1.0f, cameraY = 1.0f;
+	glm::vec3 x_axis(1.0, 0.0, 0.0);
+	glm::vec3 y_axis(0.0, 1.0, 0.0);
+	glm::vec3 z_axis(0.0, 0.0, 1.0);
+	glm::vec3 cam_up = y_axis;
+	glm::vec3 cam_right = x_axis;
+	glm::vec3 cam_front = -z_axis;
 
-	GLfloat cameraX = 0.0f, cameraY = 0.0f;
-	//glm::mat4 MVP(1.0);
+	glm::vec3 cam_pos(0, 0, 0);
+
 	glm::vec2 wh;
 	int N_triangles;
 	int N_vertex;
@@ -60,7 +67,6 @@ namespace
 	void Renderer::FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
 		glViewport(0, 0, width, height);
 		wh = glm::vec2(width, height);
-		//std::cout<<width<<"x"<<height<<" "<<w<<"x"<<h<<"\n";
 	}
 	int InitCamera(void)
 	{
@@ -152,7 +158,6 @@ namespace
 		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
-
 		static const GLfloat g_color_buffer_data[] = {
 			1.0f, 0.0f, 0.0f, 1.0f, //0
 			0.0f, 1.0f, 0.0f, 0.5f, //1
@@ -208,12 +213,11 @@ int Init(void)
 	InitBackground();
 
 	glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
-	
-	//glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	InitBox();
+
 	
 	TextureID = glGetUniformLocation(programID, "myTextureSampler");
 	Texture = loadBMP_custom("./textureTest.bmp");
@@ -221,8 +225,9 @@ int Init(void)
 	//Texture = loadImage_custom("./Player.png");
 
 
-	return 0;
 
+
+	return 0;
 }
 
 void DrawBackground()
@@ -261,6 +266,7 @@ void DrawBox()
 {
 	glEnable(GL_BLEND);
 
+
 	RotateMath();
 	glUseProgram(programID);
 	
@@ -278,6 +284,7 @@ void DrawBox()
 		0,
 		(void*)0
 		);
+
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
 	glVertexAttribPointer(
@@ -299,13 +306,11 @@ void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	
-	//DrawBox();
-	//DrawBackground();
+
 	Triforce(num);
 	DrawBox();
 	DrawCircle();
-	
+
 	glfwSwapBuffers(window);
 }
 void Uninit(void)
