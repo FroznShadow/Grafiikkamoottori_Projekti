@@ -215,6 +215,10 @@ int Init(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	InitBox();
 	
+	TextureID = glGetUniformLocation(programID, "myTextureSampler");
+	Texture = loadBMP_custom("./textureTest.bmp");
+	//Texture = loadImage_custom("./Player.bmp");
+	//Texture = loadImage_custom("./Player.png");
 
 
 	return 0;
