@@ -44,6 +44,9 @@
     <ClInclude Include="RandomPolygon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CollisionDetection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="VertexShader.vertexshader">

@@ -1,3 +1,5 @@
+#ifndef TEXTURE_H
+#define TEXTURE_H
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
@@ -8,11 +10,11 @@
 
 #include <GLFW\glfw3.h>
 #include <SOIL.h>
-
+#include "CollisionDetection.h"
 GLuint loadImage_custom(const char *image)
 {
 	GLuint textureID;
-
+	
 	printf("Readering image %s\n", image);
 	glGenTextures(1, &textureID);
 
@@ -215,3 +217,4 @@ GLuint loadDDS(const char * imagepath)
 
 	return textureID;
 }
+#endif

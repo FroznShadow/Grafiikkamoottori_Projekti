@@ -13,6 +13,7 @@
 #include "Matikka.h"
 #include "RandomPolygon.h"
 #include "vertexshader.h"
+#include "CollisionDetection.h"
 namespace Renderer
 {
 	void Render();
@@ -46,15 +47,15 @@ namespace
 
 	//float alpha = 1.0f;
 
-	GLfloat cameraX = 1.0f, cameraY = 1.0f;
-	glm::vec3 x_axis(1.0, 0.0, 0.0);
-	glm::vec3 y_axis(0.0, 1.0, 0.0);
-	glm::vec3 z_axis(0.0, 0.0, 1.0);
-	glm::vec3 cam_up = y_axis;
-	glm::vec3 cam_right = x_axis;
-	glm::vec3 cam_front = -z_axis;
+	//GLfloat cameraX = 1.0f, cameraY = 1.0f;
+	//glm::vec3 x_axis(1.0, 0.0, 0.0);
+	//glm::vec3 y_axis(0.0, 1.0, 0.0);
+	//glm::vec3 z_axis(0.0, 0.0, 1.0);
+	//glm::vec3 cam_up = y_axis;
+	//glm::vec3 cam_right = x_axis;
+	//glm::vec3 cam_front = -z_axis;
 
-	glm::vec3 cam_pos(0, 0, 0);
+	//glm::vec3 cam_pos(0, 0, 0);
 
 	glm::vec2 wh;
 	int N_triangles;
@@ -279,7 +280,7 @@ void DrawBox()
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glVertexAttribPointer(
 		VERTEX_POSITION,
-		3,
+		4,
 		GL_FLOAT,
 		GL_FALSE,
 		0,
@@ -291,16 +292,17 @@ void DrawBox()
 	glVertexAttribPointer(
 		VERTEX_COLOR,
 		4,
-		GL_FLOAT,
+		GL_DOUBLE,
 		GL_FALSE,
 		0,
 		(void*)0
 		);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
-	glDrawElements(GL_TRIANGLES, N_vertex, GL_UNSIGNED_BYTE, (GLvoid*)0);
+	glDrawElements(GL_LINE_LOOP, N_vertex, GL_UNSIGNED_BYTE, (GLvoid*)0);
 	alpha += 0.015;
-	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(0);
+
 
 }
 void DrawPolygons1()
@@ -323,9 +325,10 @@ void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	DrawBackground();
-	DrawBox();
-	Triforce(num);
+	DrawBackground();	
+	DrawBox();	
+	Triforce(num);	
+
 	DrawCircle();
 	DrawPolygons1();
 	DrawPolygons2();
