@@ -129,7 +129,7 @@ namespace
 
 		programID = LoadShaders("VertexShader.vertexshader", "FragmentShader.fragmentshader");
 		MVP_MatrixID = glGetUniformLocation(programID, "MVP");
-		wh_VectorID = glGetUniformLocation(programID, "wh");
+		//wh_VectorID = glGetUniformLocation(programID, "wh");
 
 #define SQRT05 0.707
 		static GLfloat g_vertex_buffer_data[] = {
@@ -144,6 +144,11 @@ namespace
 			0.0f, -1.0f, 0.0f, //7
 			SQRT05, -SQRT05, 0.0f, //8
 		};
+		glGenBuffers(1, &vertexbuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+
 		static GLuint g_indices[] = {
 			0, 1, 2, //1
 			0, 2, 3, //2
@@ -154,14 +159,14 @@ namespace
 			0, 7, 8, //7
 			0, 8, 1, //8
 		};
+		glGenBuffers(1, &indexbuffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_indices), g_indices, GL_STATIC_DRAW);
 
-
-		glGenBuffers(1, &vertexbuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+		
 
 		static const GLfloat g_color_buffer_data[] = {
-			1.0f, 0.0f, 0.0f, 1.0f, //0
+			0.0f, 1.0f, 0.0f, 1.0f, //0
 			0.0f, 1.0f, 0.0f, 0.5f, //1
 			0.0f, 0.0f, 1.0f, 0.5f, //2
 			0.1f, 1.0f, 1.0f, 1.0f, //3
@@ -176,9 +181,7 @@ namespace
 		glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
 
-		glGenBuffers(1, &indexbuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_indices), g_indices, GL_STATIC_DRAW);
+	
 
 		N_vertex = sizeof(g_indices) / sizeof(*g_indices);
 	
@@ -214,7 +217,7 @@ int Init(void)
 	InitCamera();
 	InitBackground();
 
-	glClearColor(0.25f, 0.25f, 0.25f, 0.0f);
+	glClearColor(0.0f, 1.0f, 0.0f, 0.5f);
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -266,6 +269,8 @@ void DrawBackground()
 }
 void DrawBox()
 {
+
+
 	glEnable(GL_BLEND);
 
 
@@ -280,7 +285,7 @@ void DrawBox()
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	glVertexAttribPointer(
 		VERTEX_POSITION,
-		4,
+		3,
 		GL_FLOAT,
 		GL_FALSE,
 		0,
@@ -292,16 +297,17 @@ void DrawBox()
 	glVertexAttribPointer(
 		VERTEX_COLOR,
 		4,
-		GL_DOUBLE,
+		GL_FLOAT,
 		GL_FALSE,
 		0,
 		(void*)0
 		);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
-	glDrawElements(GL_LINE_LOOP, N_vertex, GL_UNSIGNED_BYTE, (GLvoid*)0);
+	//glDrawElements(GL_LINE_LOOP, N_vertex, GL_UNSIGNED_BYTE, (GLvoid*)0);
+	glDrawElements(GL_TRIANGLES, N_vertex, GL_UNSIGNED_INT, (GLvoid*)0);
 	alpha += 0.015;
-	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 
 
 }
@@ -325,13 +331,13 @@ void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	DrawBackground();	
+	//DrawBackground();	
 	DrawBox();	
-	Triforce(num);	
+	//Triforce(num);	
 
 	DrawCircle();
-	DrawPolygons1();
-	DrawPolygons2();
+	//DrawPolygons1();
+	//DrawPolygons2();
 	glfwSwapBuffers(window);
 }
 void Uninit(void)

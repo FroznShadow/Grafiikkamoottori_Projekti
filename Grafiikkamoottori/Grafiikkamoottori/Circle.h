@@ -17,11 +17,11 @@ void DrawCircle()
 	glColor3f(1.0, 1.0, 0.6);
 	glBegin(GL_TRIANGLE_FAN);
 	glVertex2f(x1, y1);
-	getPolygonBoudningBox( aabbX1, aabbX2, aabbY1, aabbY2 );
+	//getPolygonBoudningBox( aabbX1, aabbX2, aabbY1, aabbY2 );
 
 	for (angle = 1.0f; angle<361.0f; angle += 0.2)
 	{
-		glColor3f(1.0, 1.0, 0.6);
+		glColor3f(0.0, 1.0, 0.0);
 
 		x2 = x1 + sin(angle)*radius;
 		y2 = y1 + cos(angle)*radius;
