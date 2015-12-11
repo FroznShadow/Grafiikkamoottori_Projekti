@@ -335,7 +335,7 @@ void DrawTriangle()
 {
 	
 	glEnable(GL_BLEND);
-	RotateMath(-alpha, 0.1, 0.25);
+	RotateMath(-alpha, 0.8, 0.25);
 	glUseProgram(triangleProgramID);
 
 	glUniformMatrix4fv(textureMatrixID, 1, GL_FALSE, &MVP[0][0]);

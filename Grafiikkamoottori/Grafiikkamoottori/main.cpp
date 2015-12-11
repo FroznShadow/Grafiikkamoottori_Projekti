@@ -9,15 +9,15 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		if (num > 3)
 			num = 0;
 	}
-	GLfloat cameraSpeed = 0.05f;
+	GLfloat cameraSpeed = 0.025f;
 	if (key == GLFW_KEY_W)
-		cam_pos += cameraSpeed * cam_front;
+		cam_pos += cameraSpeed * cam_up; 
 	if (key == GLFW_KEY_S)
-		cam_pos -= cameraSpeed * cam_front;
+		cam_pos -= cameraSpeed * cam_up;
 	if (key == GLFW_KEY_A)
-		cam_pos -= glm::normalize(glm::cross(cam_front, cam_up)) * cameraSpeed;
+		cam_pos -=glm::normalize(glm::cross(cam_front, cam_up)) * cameraSpeed;
 	if (key == GLFW_KEY_D)
-		cam_pos += glm::normalize(glm::cross(cam_front, cam_up)) * cameraSpeed;
+		cam_pos +=glm::normalize(glm::cross(cam_front, cam_up)) * cameraSpeed;
 
 //	glMatrixMode(GL_MODELVIEW);
 //	glPopMatrix();
