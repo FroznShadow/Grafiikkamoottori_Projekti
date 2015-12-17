@@ -14,6 +14,7 @@
 #include "RandomPolygon.h"
 #include "vertexshader.h"
 #include "CollisionDetection.h"
+
 namespace Renderer
 {
 	void Render();
@@ -27,13 +28,14 @@ namespace Renderer
 }
 namespace
 {
-	//GLFWwindow* window;
 	GLenum err;
 
 	GLuint programID;
 	GLuint MVP_MatrixID;
+	GLuint MVP_textureMatrixID;
 	GLuint textureMatrixID;
 	GLuint wh_VectorID;
+	GLuint wh_textureVectorID;
 	GLuint vertexbuffer;
 	GLuint VertexArrayID;
 	GLuint colorbuffer;
@@ -51,6 +53,7 @@ namespace
 
 	GLuint TextureID;
 	GLuint Texture;
+	GLuint Texture2;
 	GLuint uvbuffer;
 	GLuint indexbuffer;
 
@@ -79,18 +82,114 @@ namespace
 		glPushMatrix();
 		return 0;
 	}
+	int InitObject(const char* name, const GLfloat vertexBufferData[], GLubyte indices[], GLfloat uvBufferData[], const char* vertexShader = NULL , const char* fragmentShader = NULL, const char* texturePath = NULL)
+	{
+
+		GLuint Vertexbuffer;
+		GLuint VertexArrayID;
+		GLuint Indexbuffer;
+		GLuint ProgramID;
+
+		glGenVertexArrays(1, &VertexArrayID);
+		glBindVertexArray(VertexArrayID);
+
+		if (vertexShader != NULL && fragmentShader != NULL)
+			ProgramID = LoadShaders(vertexShader, fragmentShader);
+		else
+			ProgramID = LoadShaders("Texture.VertexShader", "Texture.FragmentShader");
+		
+		GLfloat vertex_buffer_data[] = {0};
+
+		for (int i = 0; i < sizeof(vertexBufferData); i++)
+		{
+			vertex_buffer_data[i] = vertexBufferData[i];
+		}
+
+		glGenBuffers(1, &Vertexbuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, Vertexbuffer);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_buffer_data), vertex_buffer_data, GL_STATIC_DRAW);
+				
+		GLubyte Indices[] ={0};
+
+		for (int i = 0; i < sizeof(indices); i++)
+		{
+			Indices[i] = indices[i];
+		}
+
+		glGenBuffers(1, &Indexbuffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Indexbuffer);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+		GLfloat g_uv_buffer_data[] ={0.0};
+
+		for (int i = 0; i < sizeof(uvBufferData); i++)
+		{
+			g_uv_buffer_data[i] = uvBufferData[i];
+		}
+
+		glGenBuffers(1, &uvbuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
+		TextureID = glGetUniformLocation(ProgramID, "myTextureSampler");
+		if (texturePath != NULL)
+		{
+			
+			Texture = loadBMP_custom(texturePath);
+		}
+
+		
+		return 0;
+	}
+
+	void drawObject(GLuint ProgramID, GLuint Vertexbuffer, GLuint Colorbuffer,GLuint Indexbuffer, GLuint Nvertex)
+	{
+		glEnable(GL_BLEND);
+		//RotateMath(-alpha, 0.8, 0.25);
+		glUseProgram(ProgramID);
+
+		glUniformMatrix4fv(MVP_MatrixID, 1, GL_FALSE, &MVP[0][0]);
+		glUniform2fv(wh_VectorID, 1, &wh[0]);
+
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, Vertexbuffer);
+		glVertexAttribPointer(
+			VERTEX_POSITION,
+			3,
+			GL_FLOAT,
+			GL_FALSE,
+			0,
+			(void*)0
+			);
+
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, Colorbuffer);
+		glVertexAttribPointer(
+			VERTEX_COLOR,
+			4,
+			GL_FLOAT,
+			GL_FALSE,
+			0,
+			(void*)0
+			);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Indexbuffer);
+		glDrawElements(GL_TRIANGLES, Nvertex, GL_UNSIGNED_INT, (GLvoid*)0);
+		//alpha += 0.015;
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+	}
 	int InitBackground(void)
 	{
 		glGenVertexArrays(1, &textureVertexArrayID);
 		glBindVertexArray(textureVertexArrayID);
-
 		textureProgramID = LoadShaders("Texture.VertexShader", "Texture.FragmentShader");
+		MVP_textureMatrixID = glGetUniformLocation(textureProgramID, "MVP");
+		wh_textureVectorID = glGetUniformLocation(textureProgramID, "wh");
 		static const GLfloat texture_vertex_buffer_data[] =
 		{
-			-1.0, -1.0, 0.9,
-			1.0, -1.0, 0.9,
-			-1.0, 1.0, 0.9,
-			1.0, 1.0, 0.9,
+			-.9, -.9, 0.9,
+			.9, -.9, 0.9,
+			-.9, .9, 0.9,
+			.9, .9, 0.9,
 		};
 		glGenBuffers(1, &textureVertexbuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, textureVertexbuffer);
@@ -114,7 +213,7 @@ namespace
 		glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
 		TextureID = glGetUniformLocation(textureProgramID, "myTextureSampler");
-		Texture = loadBMP_custom("uvtemplate.bmp");
+		Texture = loadBMP_custom("textureTest.bmp");
 		return 0;
 	}
 
@@ -184,7 +283,7 @@ namespace
 		glGenVertexArrays(1, &triangleVertexArrayID);
 		glBindVertexArray(triangleVertexArrayID);
 
-		triangleProgramID = LoadShaders("VertexShader.vertexshader", "FragmentShader.fragmentshader");
+		triangleProgramID = LoadShaders("Texture.vertexshader", "Texture.fragmentshader");
 		textureMatrixID = glGetUniformLocation(triangleProgramID, "MVP");
 
 		static GLfloat g_vertex_buffer_data1[] =
@@ -215,6 +314,8 @@ namespace
 		glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data1), g_color_buffer_data1, GL_STATIC_DRAW);
 
 		N_trianglevertex = sizeof(g_indices1) / sizeof(*g_indices1);
+		TextureID = glGetUniformLocation(textureProgramID, "myTextureSampler");
+		Texture2 = loadBMP_custom("textureTest.bmp");
 		return 0;
 	}
 int Init(void)
@@ -263,8 +364,12 @@ int Init(void)
 
 void DrawBackground()
 {
-	glDisable(GL_BLEND);
+	RotateMath(rotate2, 0.1, 1.00);
+
 	glUseProgram(textureProgramID);
+	glUniformMatrix4fv(MVP_textureMatrixID, 1, GL_FALSE, &MVP[0][0]);
+	glDisable(GL_BLEND);
+	glUniform2fv(wh_textureVectorID, 1, &wh[0]);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, Texture);
 	glUniform1i(TextureID, 0);
@@ -292,6 +397,7 @@ void DrawBackground()
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (GLvoid*)0);
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+	rotate2 += 0.015;
 }
 void DrawBox()
 {
@@ -334,13 +440,15 @@ void DrawBox()
 void DrawTriangle()
 {
 	
-	glEnable(GL_BLEND);
+	glDisable(GL_BLEND);
 	RotateMath(-alpha, 0.8, 0.25);
 	glUseProgram(triangleProgramID);
 
 	glUniformMatrix4fv(textureMatrixID, 1, GL_FALSE, &MVP[0][0]);
 	glUniform2fv(wh_VectorID, 1, &wh[0]);
-
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, Texture2);
+	glUniform1i(TextureID, 0);
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, triangleVertexbuffer);
 	glVertexAttribPointer(
@@ -367,6 +475,7 @@ void DrawTriangle()
 	alpha += 0.015;
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+
 }
 void DrawPolygons1()
 {

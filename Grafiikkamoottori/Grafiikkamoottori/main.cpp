@@ -19,11 +19,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_D)
 		cam_pos +=glm::normalize(glm::cross(cam_front, cam_up)) * cameraSpeed;
 
-//	glMatrixMode(GL_MODELVIEW);
-//	glPopMatrix();
-//	glLoadIdentity();
-//	//glTranslatef(-cameraX, -cameraY, 0.0f);
-//	glPushMatrix();
 }
 int main(int argc, char* argv[])
 {

@@ -10,6 +10,7 @@
 
 GLFWwindow* window;
 float alpha = 1.0f;
+float rotate2 = -0.05f;
 glm::mat4 MVP(1.0);
 	glm::vec3 x_axis(1.0, 0.0, 0.0);
 	glm::vec3 y_axis(0.0, 1.0, 0.0);
